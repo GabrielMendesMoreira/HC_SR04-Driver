@@ -1,0 +1,20 @@
+#include <linux/init.h>
+#include <linux/module.h>
+#include <linux/kernel.h>
+
+MODULE_LICENSE("GPL");
+MODULE_A
+MODULE_DESCRIPTION("Driver para o sensor HC-SR04");
+MODULE_VERSION("1.0");
+
+static int __init hc_sr04_init(void) {
+    printk(KERN_INFO "HC-SR04 Driver carregado\n");
+    return 0;
+}
+
+static void __exit hc_sr04_exit(void) {
+    printk(KERN_INFO "HC-SR04 Driver descarregado\n");
+}
+
+module_init(hc_sr04_init);
+module_exit(hc_sr04_exit);
