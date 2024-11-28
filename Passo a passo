@@ -1,0 +1,131 @@
+sudo apt update 
+
+sudo apt install -y git bc bison flex libssl-dev make 
+
+mkdir ~/kernel-compiling 
+
+cd ~/kernel-compilin 
+
+git clone --branch rpi-5.10.y --depth=1 https://github.com/raspberrypi/linu 
+
+cd linux 
+
+KERNEL=kernel 
+
+make ARCH=arm bcm2711_defconfig 
+
+make ARCH=arm -j$(nproc) 
+
+make ARCH=arm module 
+
+sudo make ARCH=arm modules_instal 
+
+sudo cp arch/arm/boot/zImage /boot/kernel7.img 
+
+sudo cp arch/arm/boot/dts/*.dtb /boot/ 
+
+sudo cp arch/arm/boot/dts/overlays/*.dtb* /boot/overlays 
+
+sudo cp arch/arm/boot/dts/overlays/README /boot/overlays/ 
+
+sudo nano /boot/config.txt 
+
+ 
+
+ 
+
+ 
+
+Adicionado o código: 
+
+kernel=kernel7.img 
+
+sudo reboot 
+
+ 
+
+Após todo o processo, tudo parece correto. Reiniciamos a rasp e iremos testar 
+
+Vamos verificar a versão do kernel: 
+ 
+uname -r 
+
+ 
+
+thecheeky@raspberrypi:~ $ uname -r 
+
+5.10.110-v7l 
+
+mkdir ~/hc-sr04-linux-device-driver 
+
+cd ~/hc-sr04-linux-device-driver 
+
+nano hc_sr04.c 
+
+ 
+
+#include <linux/init.h> 
+
+#include <linux/module.h> 
+
+#include <linux/kernel.h> 
+
+ 
+
+MODULE_LICENSE("GPL"); 
+
+MODULE_AUTHOR("Grupo 4 - Sistemas Embarcados"); 
+
+MODULE_DESCRIPTION("Driver para o sensor HC-SR04"); 
+
+MODULE_VERSION("1.0"); 
+
+ 
+
+static int __init hc_sr04_init(void) { 
+
+    printk(KERN_INFO "HC-SR04 Driver carregado\n"); 
+
+    return 0; 
+
+} 
+
+ 
+
+static void __exit hc_sr04_exit(void) { 
+
+    printk(KERN_INFO "HC-SR04 Driver descarregado\n"); 
+
+} 
+
+ 
+
+module_init(hc_sr04_init); 
+
+module_exit(hc_sr04_exit); 
+
+ 
+
+nano Makefile 
+
+ 
+
+KERNELDIR ?= ~/kernel-compiling/linux 
+
+PWD := $(shell pwd) 
+
+obj-m := hc_sr04.o 
+
+ 
+
+all: 
+
+make -C $(KERNELDIR) M=$(PWD) modules 
+
+ 
+
+clean: 
+
+make -C $(KERNELDIR) M=$(PWD) clean 
+
+ 
